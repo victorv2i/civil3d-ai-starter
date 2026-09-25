@@ -1,0 +1,63 @@
+<Project>
+
+  <!--
+    Which Civil 3D to build for. Left empty, the build picks the newest
+    Civil 3D (2024 to 2027) installed on this computer. To pick one yourself,
+    put the year in, for example: <Civil3DYear>2025</Civil3DYear>
+  -->
+  <PropertyGroup>
+    <Civil3DYear></Civil3DYear>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Civil3DYear)' == ''">
+    <Civil3DYear Condition="'$(Civil3DYear)' == '' and Exists('$(ProgramW6432)\Autodesk\AutoCAD 2027\C3D')">2027</Civil3DYear>
+    <Civil3DYear Condition="'$(Civil3DYear)' == '' and Exists('$(ProgramW6432)\Autodesk\AutoCAD 2026\C3D')">2026</Civil3DYear>
+    <Civil3DYear Condition="'$(Civil3DYear)' == '' and Exists('$(ProgramW6432)\Autodesk\AutoCAD 2025\C3D')">2025</Civil3DYear>
+    <Civil3DYear Condition="'$(Civil3DYear)' == '' and Exists('$(ProgramW6432)\Autodesk\AutoCAD 2024\C3D')">2024</Civil3DYear>
+    <Civil3DYear Condition="'$(Civil3DYear)' == ''">2026</Civil3DYear>
+  </PropertyGroup>
+
+  <!-- .NET version, Autodesk package versions and release number for each year. -->
+  <PropertyGroup Condition="'$(Civil3DYear)' == '2024'">
+    <TargetFramework>net48</TargetFramework>
+    <AutoCADPackageVersion>24.3.0</AutoCADPackageVersion>
+    <Civil3DPackageVersion>13.6.1781</Civil3DPackageVersion>
+    <AutoCADSeries>R24.3</AutoCADSeries>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Civil3DYear)' == '2025'">
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <AutoCADPackageVersion>25.0.1</AutoCADPackageVersion>
+    <Civil3DPackageVersion>13.7.1175</Civil3DPackageVersion>
+    <AutoCADSeries>R25.0</AutoCADSeries>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Civil3DYear)' == '2026'">
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <AutoCADPackageVersion>25.1.0</AutoCADPackageVersion>
+    <Civil3DPackageVersion>13.8.1516</Civil3DPackageVersion>
+    <AutoCADSeries>R25.1</AutoCADSeries>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Civil3DYear)' == '2027'">
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <AutoCADPackageVersion>26.0.0</AutoCADPackageVersion>
+    <Civil3DPackageVersion>13.9.628</Civil3DPackageVersion>
+    <AutoCADSeries>R26.0</AutoCADSeries>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <RepoRoot>$(MSBuildThisFileDirectory)</RepoRoot>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <PlatformTarget>x64</PlatformTarget>
+    <UseWindowsForms>true</UseWindowsForms>
+    <UseWPF>true</UseWPF>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+  </PropertyGroup>
+
+  <Target Name="CheckCivil3DYear" BeforeTargets="Restore;CollectPackageReferences;Build"
+          Condition="'$(TargetFramework)' == ''">
+    <Error Text="Civil3DYear is '$(Civil3DYear)'. This kit supports Civil 3D 2024, 2025, 2026 and 2027. Fix it in Directory.Build.props." />
+  </Target>
+
+</Project>

@@ -1,0 +1,22 @@
+# Build output and generated files
+build/
+bin/
+obj/
+api-docs/
+logs/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+
+# Civil 3D / AutoCAD lock, backup and temp files
+*.dwl
+*.dwl2
+*.bak
+*.sv$
+*.ac$
+plot.log
+
+# Personal Claude Code settings
+.claude/settings.local.json

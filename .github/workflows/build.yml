@@ -1,0 +1,43 @@
+name: build
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        year: [2024, 2025, 2026, 2027]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      - name: Build for Civil 3D ${{ matrix.year }}
+        run: dotnet build MyTools.sln -p:Civil3DYear=${{ matrix.year }} -warnaserror
+      - name: Build the shared copy
+        run: dotnet build src/MyTools/MyTools.csproj -c Release -p:Civil3DYear=${{ matrix.year }} -warnaserror
+
+  setup:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run setup in Windows PowerShell 5.1
+        shell: powershell
+        run: ./scripts/setup.ps1 -Yes
+      - name: Check the plug-in was installed
+        shell: powershell
+        run: |
+          $bundle = Join-Path $env:APPDATA 'Autodesk\ApplicationPlugins\MyTools.bundle'
+          foreach ($file in 'PackageContents.xml', 'Contents\MyTools.Loader.dll', 'Contents\repo-path.txt') {
+              if (-not (Test-Path (Join-Path $bundle $file))) { throw "missing $file" }
+          }
+          [xml](Get-Content (Join-Path $bundle 'PackageContents.xml')) | Out-Null
+      - name: Build with scripts\build.cmd
+        shell: cmd
+        run: scripts\build.cmd -warnaserror
+      - name: Remove it again
+        shell: powershell
+        run: ./scripts/setup.ps1 -Remove

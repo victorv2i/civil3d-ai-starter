@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ApplicationPackage
+    SchemaVersion="1.0"
+    AppVersion="1.0.0"
+    Name="MyTools (shared)"
+    Description="Civil 3D commands built with civil3d-ai-starter."
+    Author="civil3d-ai-starter"
+    ProductCode="{392B8A74-AF67-4911-AEF8-BFF050481A61}">
+  <Components>
+    <ComponentEntry
+        AppName="MyToolsShared"
+        ModuleName="./Contents/MyTools.dll"
+        AppDescription="MyTools commands"
+        AppType=".Net"
+        LoadOnAutoCADStartup="True">
+      <RuntimeRequirements OS="Win64" Platform="Civil3D" SeriesMin="@SERIES@" SeriesMax="@SERIES@" />
+    </ComponentEntry>
+  </Components>
+</ApplicationPackage>

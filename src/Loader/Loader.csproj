@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    The loader Civil 3D starts with. It loads build\Debug\MyTools.dll and
+    reloads it whenever a new build appears. You shouldn't need to change it.
+  -->
+  <PropertyGroup>
+    <AssemblyName>MyTools.Loader</AssemblyName>
+    <RootNamespace>MyTools.Loader</RootNamespace>
+    <OutputPath>$(RepoRoot)build\Loader\</OutputPath>
+    <BundleDir>$(RepoRoot)build\MyTools.bundle\</BundleDir>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoCAD.NET" Version="$(AutoCADPackageVersion)" ExcludeAssets="runtime" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="PackageContents.template.xml" />
+  </ItemGroup>
+
+  <!-- Lay out an autoload bundle in build\MyTools.bundle. Setup copies it into Civil 3D's plug-in folder. -->
+  <Target Name="MakeBundle" AfterTargets="Build">
+    <PropertyGroup>
+      <_PackageXml>$([System.IO.File]::ReadAllText('$(MSBuildProjectDirectory)\PackageContents.template.xml').Replace('@SERIES@', '$(AutoCADSeries)'))</_PackageXml>
+    </PropertyGroup>
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(BundleDir)Contents" />
+    <WriteLinesToFile File="$(BundleDir)PackageContents.xml" Lines="$([MSBuild]::Escape($(_PackageXml)))" Overwrite="true" />
+    <WriteLinesToFile File="$(BundleDir)Contents\repo-path.txt" Lines="$([MSBuild]::Escape($(RepoRoot)))" Overwrite="true" />
+  </Target>
+
+</Project>

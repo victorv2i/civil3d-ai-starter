@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ApplicationPackage
+    SchemaVersion="1.0"
+    AppVersion="1.0.0"
+    Name="MyTools"
+    Description="Loads your MyTools commands into Civil 3D and picks up each new build."
+    Author="civil3d-ai-starter"
+    ProductCode="{FA3F606E-14B8-4366-8D5E-BA2115667B0E}">
+  <Components>
+    <ComponentEntry
+        AppName="MyTools"
+        ModuleName="./Contents/MyTools.Loader.dll"
+        AppDescription="MyTools loader"
+        AppType=".Net"
+        LoadOnAutoCADStartup="True">
+      <RuntimeRequirements OS="Win64" Platform="Civil3D" SeriesMin="@SERIES@" SeriesMax="@SERIES@" />
+    </ComponentEntry>
+  </Components>
+</ApplicationPackage>

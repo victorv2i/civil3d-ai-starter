@@ -1,0 +1,6 @@
+* text=auto
+*.cmd text eol=crlf
+*.bat text eol=crlf
+*.ps1 text eol=crlf
+*.sln text eol=crlf
+*.dwg binary

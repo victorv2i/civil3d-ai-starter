@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cmd //c scripts\\\\build.cmd *)",
+      "Bash(cmd //c scripts/build.cmd *)",
+      "Bash(./scripts/build.cmd *)",
+      "Bash(scripts/build.cmd *)",
+      "Bash(dotnet build *)",
+      "PowerShell(.\\scripts\\build.cmd *)",
+      "PowerShell(scripts\\build.cmd *)",
+      "PowerShell(dotnet build *)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "PowerShell(git add *)",
+      "PowerShell(git commit *)",
+      "PowerShell(./scripts/build.cmd *)",
+      "Bash(powershell -NoProfile -ExecutionPolicy Bypass -File scripts/setup.ps1 *)",
+      "PowerShell(powershell -NoProfile -ExecutionPolicy Bypass -File scripts/setup.ps1 *)"
+    ]
+  }
+}

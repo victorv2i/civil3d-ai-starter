@@ -1,0 +1,52 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Your commands. Everything Civil 3D needs comes from Directory.Build.props. -->
+  <PropertyGroup>
+    <AssemblyName>MyTools</AssemblyName>
+    <RootNamespace>MyTools</RootNamespace>
+    <OutputPath>$(RepoRoot)build\$(Configuration)\</OutputPath>
+    <!-- Copy any extra packages you add (for example an Excel library) next to MyTools.dll. -->
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+  </PropertyGroup>
+
+  <!-- ExcludeAssets="runtime" keeps Autodesk's DLLs out of the build folder: Civil 3D already has them. -->
+  <ItemGroup>
+    <PackageReference Include="AutoCAD.NET" Version="$(AutoCADPackageVersion)" ExcludeAssets="runtime" />
+    <PackageReference Include="Civil3D.NET" Version="$(Civil3DPackageVersion)" ExcludeAssets="runtime" />
+  </ItemGroup>
+
+  <!--
+    Autodesk ships its API reference as XML files inside these packages.
+    Copy them to api-docs\<year>\ so they are easy to search.
+  -->
+  <Target Name="CopyAutodeskApiDocs" AfterTargets="ResolveAssemblyReferences">
+    <ItemGroup>
+      <_AutodeskApiDoc Include="@(ReferencePath->'%(RootDir)%(Directory)%(Filename).xml')"
+                       Condition="'%(ReferencePath.NuGetPackageId)' == 'Civil3D.NET' or '%(ReferencePath.NuGetPackageId)' == 'AutoCAD.NET' or '%(ReferencePath.NuGetPackageId)' == 'AutoCAD.NET.Core' or '%(ReferencePath.NuGetPackageId)' == 'AutoCAD.NET.Model'" />
+      <_AutodeskApiDocFound Include="@(_AutodeskApiDoc)" Condition="Exists('%(FullPath)')" />
+    </ItemGroup>
+    <Copy SourceFiles="@(_AutodeskApiDocFound)" DestinationFolder="$(RepoRoot)api-docs\$(Civil3DYear)" SkipUnchangedFiles="true" />
+  </Target>
+
+  <!--
+    Release builds also produce build\Share\MyTools-Shared.bundle. Copy that folder into
+    a coworker's %APPDATA%\Autodesk\ApplicationPlugins and Civil 3D loads the tools
+    every time it starts.
+  -->
+  <ItemGroup>
+    <None Include="SharePackageContents.template.xml" />
+  </ItemGroup>
+  <Target Name="MakeShareBundle" AfterTargets="Build" Condition="'$(Configuration)' == 'Release'">
+    <PropertyGroup>
+      <_ShareDir>$(RepoRoot)build\Share\MyTools-Shared.bundle\</_ShareDir>
+      <_SharePackageXml>$([System.IO.File]::ReadAllText('$(MSBuildProjectDirectory)\SharePackageContents.template.xml').Replace('@SERIES@', '$(AutoCADSeries)'))</_SharePackageXml>
+    </PropertyGroup>
+    <ItemGroup>
+      <_ShareFiles Include="$(OutDir)*.dll" />
+    </ItemGroup>
+    <RemoveDir Directories="$(_ShareDir)" />
+    <Copy SourceFiles="@(_ShareFiles)" DestinationFolder="$(_ShareDir)Contents" />
+    <WriteLinesToFile File="$(_ShareDir)PackageContents.xml" Lines="$([MSBuild]::Escape($(_SharePackageXml)))" Overwrite="true" />
+  </Target>
+
+</Project>
